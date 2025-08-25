@@ -1,7 +1,6 @@
 import torch.nn as nn
 from collections import OrderedDict  # 用于_block方法中的OrderedDict
 import torch
-import torch.optim as optim
 
 class UNet(nn.Module):
     def __init__(self, in_channels=3, out_channels=1, init_features=32):
@@ -61,7 +60,7 @@ class UNet(nn.Module):
         dec1 = self.decoder1(dec1)
         return torch.sigmoid(self.conv(dec1))
 
-    @staticmethod
+
     def _block(in_channels, features, name):
         return nn.Sequential(
             OrderedDict(
@@ -95,8 +94,3 @@ class UNet(nn.Module):
         )
 
 
-# 实例化模型
-model = UNet().cuda()
-# 设置损失函数和优化器
-criterion = nn.BCELoss()  # 二分类交叉熵损失
-optimizer = optim.Adam(model.parameters(), lr=0.001)
