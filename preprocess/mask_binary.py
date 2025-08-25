@@ -55,9 +55,9 @@ def binarize_images(input_dir, output_dir, threshold=5):
 # 使用示例
 if __name__ == "__main__":
     # 输入目录（包含要处理的图像）
-    input_directory = "dataset/roadcrack/train/masks"
+    input_directory = "../results"
     # 输出目录（保存二值化后的图像）
-    output_directory = "dataset/roadcrack/train/masks_binary"
+    output_directory = "../results_binary"
     # 二值化阈值（可根据需要调整）
     binarization_threshold = 30
 
