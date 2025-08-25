@@ -1,3 +1,9 @@
+import torch
+from model import UNet  # 导入模型类
+from data_loader import dataloader  # 导入数据加载器（建议用验证集加载器）
+from model import model,optimizer,criterion
+
+# 加载模型
 model.eval()
 with torch.no_grad():
     correct = 0

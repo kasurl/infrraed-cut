@@ -33,16 +33,22 @@ class RoadCrackDataset(Dataset):
 
 # 示例转换
 transform = transforms.Compose([
-    transforms.Resize((256, 256)),
+    transforms.Resize((512, 512)),
     transforms.ToTensor(),
 ])
 
 # 创建数据集实例
-dataset = RoadCrackDataset(
+train_dataset = RoadCrackDataset(
     images_dir="dataset/roadcrack/train/images/",
     masks_dir="dataset/roadcrack/train/masks/",
     transform=transform
 )
 
+val_dataset = RoadCrackDataset(
+    images_dir="dataset/roadcrack/val/images/",
+    masks_dir="dataset/roadcrack/val/masks/",
+    transform=transform
+)
 # 创建数据加载器
-dataloader = DataLoader(dataset, batch_size=4, shuffle=True, num_workers=4)
+train_dataloader = DataLoader(train_dataset, batch_size=4, shuffle=True, num_workers=0)
+val_dataloader = DataLoader(train_dataset, batch_size=4, shuffle=True, num_workers=0)
