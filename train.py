@@ -4,27 +4,18 @@ import torch.nn as nn
 import os
 from model import UNet
 from data_loader import train_dataloader, val_dataloader
-
-
-def calculate_iou(pred, target, threshold=0.5):
-    pred = (pred > threshold).float()
-    intersection = (pred * target).sum()
-    union = (pred + target).sum() - intersection
-    return intersection / (union + 1e-8)  # 避免除零
-
-
+from train_met import calculate_iou, save_model_if_best
 # 实例化模型
 model = UNet().cuda()
 
 # 设置损失函数和优化器
+MODEL_DIR = "saved_models"
 criterion = nn.BCELoss()  # 二分类交叉熵损失
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 # 确保保存模型的目录存在
-os.makedirs("saved_models", exist_ok=True)
+os.makedirs(MODEL_DIR, exist_ok=True)
 
 num_epochs = 100
-best_val_losses = [float('inf')] * 3  # 存储最佳的三个验证损失
-best_model_paths = ["", "", ""]  # 存储对应最佳模型的路径
 
 for epoch in range(num_epochs):
     # 训练阶段
@@ -77,16 +68,11 @@ for epoch in range(num_epochs):
     val_accuracy = 100 * correct / total
     val_iou = total_iou / len(val_dataloader)  # 平均IoU
 
-    current_val_loss = val_epoch_loss
-    if current_val_loss < best_val_losses[-1]:
-        # 保存模型
-        model_path = f"saved_models/model_epoch_{epoch + 1}_val_loss_{current_val_loss:.4f}.pth"
-        torch.save(model.state_dict(), model_path)
-        # 更新最佳损失和路径
-        best_val_losses = sorted(best_val_losses + [current_val_loss])[:3]
-        best_model_paths = [model_path if loss == current_val_loss else path
-                            for loss, path in zip(best_val_losses, best_model_paths + [""])]
+    # 保存验证损失最小的三个模型
+    save_model_if_best(model, epoch, val_epoch_loss)
 
     # 打印时增加IoU
     print(f'Epoch {epoch + 1}/{num_epochs}')
     print(f'Train Loss: {train_epoch_loss:.4f} | Val Loss: {val_epoch_loss:.4f} | Val Accuracy: {val_accuracy:.2f}% | Val IoU: {val_iou:.4f}')
+
+
