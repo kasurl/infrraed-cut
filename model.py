@@ -3,7 +3,7 @@ from collections import OrderedDict  # 用于_block方法中的OrderedDict
 import torch
 
 class UNet(nn.Module):
-    def __init__(self, in_channels=3, out_channels=1, init_features=32):
+    def __init__(self, in_channels=1, out_channels=1, init_features=32):
         super(UNet, self).__init__()
         features = init_features
         self.encoder1 = UNet._block(in_channels, features, name="enc1")

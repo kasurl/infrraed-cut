@@ -18,7 +18,7 @@ def predict_cracks(model, image_path, save_dir='results'):
     os.makedirs(save_dir, exist_ok=True)
 
     # 加载图像
-    img = Image.open(image_path).convert("RGB")
+    img = Image.open(image_path).convert("L")
     original_size = img.size  # 保存原始尺寸用于后续恢复
 
     # 应用相同的转换
@@ -59,16 +59,18 @@ def predict_cracks(model, image_path, save_dir='results'):
 
 
 if __name__ == '__main__':
-    model_path = 'saved_models/epoch_19_val_loss_0.0272.pth'  # 模型权重文件路径
-    image_path = 'dataset/roadcrack/train/images/1014.png'  # 测试图像路径
-
+    model_path = 'checkpoints/feature2.pth'  # 模型权重文件路径
+    image_path = 'dataset/roadcrack/val/images'  # 测试图像路径
+    images_list = os.listdir(image_path)  # 获取测试图像列表
     # 加载模型
     model = UNet().cuda()
     model.load_state_dict(torch.load(model_path))
     model.eval()  # 设置为评估模式
 
     # 进行预测
-    saved_path = predict_cracks(model, image_path)
-    print(f"预测结果已保存至: {saved_path}")
+    for image in images_list:
+        img_path = os.path.join(image_path, image)
+        saved_path = predict_cracks(model, img_path)
+        print(f"预测结果已保存至: {saved_path}")
 
 
